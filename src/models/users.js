@@ -9,7 +9,8 @@ const UserSchema = new Schema({
     surname: { type: String },
     email: { type:String },
     gender: { type:String,  enum: ['Male', 'Female', 'Other'] }, // added enum
-    accountID: { type: Number } // why
+    accountID: { type: Number }, // bank account
+    isAdmin: {type:Boolean}
 });
 
 // Virtual for user's full name
