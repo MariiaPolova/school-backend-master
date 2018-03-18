@@ -7,7 +7,6 @@ import * as _ from "lodash";
 async function searchMdw(ctx, next){
     await next()
     {
-        // const filt = await _.filter(User, ctx.request.query);
         const filt = await User.find()
             .find(ctx.request.query);
         ctx.ok(filt);
