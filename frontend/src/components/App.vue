@@ -18,12 +18,11 @@
 </template>
 
 <script>
-import NavBar from 'components/navBar';
+import NavBar from '../components/navBar';
 
 export default {
   components: {
     NavBar,
-    //  UserTable
   } // to delete navBar - > v-if check if this route needs hiding - check $route.name
 };
 </script>

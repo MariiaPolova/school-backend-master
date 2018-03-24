@@ -3,7 +3,7 @@
 
     POST request 'users'
 
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm" v-loading="loading">
       <el-form-item label="User name" prop="username">
         <el-input v-model="ruleForm.username"></el-input>
       </el-form-item>
@@ -21,7 +21,7 @@
       </el-form-item>
 
       <el-form-item label="Password" prop="password">
-        <el-input v-model="ruleForm.password"></el-input>
+        <el-input type="password" v-model="ruleForm.password"></el-input>
       </el-form-item>
 
       <el-form-item label="Gender" prop="gender">
@@ -30,6 +30,10 @@
           <el-radio label="Female"></el-radio>
           <el-radio label="Other"></el-radio>
         </el-radio-group>
+      </el-form-item>
+
+      <el-form-item label="Is admin" prop="isAdmin">
+        <el-switch v-model="ruleForm.isAdmin"></el-switch>
       </el-form-item>
 
       <el-form-item>
@@ -49,18 +53,20 @@
     export default {
         data() {
             return {
+                loading: true,
                 ruleForm: {
                     username: '',
                     ownname: '',
                     surname: '',
                     email: '',
                     pass: '',
-                    gender: ''
+                    gender: '',
+                    isAdmin: false
                 },
                 rules: {
                     username: [
                         { required: true, message: 'Please input username', trigger: 'blur' },
-                        { min: 3, max: 5, message: 'Length should be 3 to 5', trigger: 'blur' }
+                        { min: 3, max: 10, message: 'Length should be 3 to 10', trigger: 'blur' }
                     ],
                     ownname: [
                         { required: true, message: 'Please input First Name', trigger: 'change' }
@@ -82,7 +88,10 @@
             };
         },
         created (){
-            this.updateForm();
+            if(this.$route.params._id){
+                this.updateForm();
+            }
+
 
         },
         methods: {
@@ -92,7 +101,7 @@
                         if(this.$route.params._id){
                             axios.put('/users/' + this.$route.params._id, this.ruleForm)
                                 .then(response => {
-                                    this.$router.push('/');
+                                    this.$router.push('/users');
                                 })
                                 .catch(error => {
                                     console.log(error);
@@ -102,7 +111,7 @@
                             axios.post('/users', this.ruleForm)
                                 .then(response => {
                                     console.log(this.$route.name);
-                                    this.$router.push('/');
+                                    this.$router.push('/users');
                                 })
                                 .catch(error => {
                                     console.log(error);
@@ -118,8 +127,10 @@
             updateForm(){
                 console.log(this.$route.params + "route params");
                 if(this.$route.params){
+                    this.loading = true;
                     axios.get('/users/' + this.$route.params._id) // make async await
                         .then(response => {
+                            this.loading = false;
                             this.ruleForm = response.data;
                             console.log("ruleform " + this.ruleForm + "||" + response.data);
                         })
