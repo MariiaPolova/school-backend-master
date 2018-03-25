@@ -8,7 +8,6 @@ async function searchMdw(ctx, next){
     await next()
     {
         console.log(ctx.request.query);
-        // const filt = await _.filter Product, ctx.request.query);
         const filt = await Product.find()
             .find(ctx.request.query);
         ctx.ok(filt);
