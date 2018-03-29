@@ -32,7 +32,7 @@
 
             <el-table-column
                     label="Admin"
-                    width="100"
+                    width="120"
                     sortable>
                 <template slot-scope="scope">
                     <el-switch

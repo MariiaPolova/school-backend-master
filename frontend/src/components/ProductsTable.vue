@@ -70,7 +70,8 @@
                 loading: true,
                 filters: {
                     title: "",
-                    filters_memory: "",
+                    filters_memory_min: 0,
+                    filters_memory_max: 1000,
                     category: "",
                 },
                 products: []
@@ -86,7 +87,8 @@
             });
 
             eventBus.$on('memoryCustomFilter', data => {
-                this.filters.filters_memory = data.filters_memory
+                this.filters.filters_memory_min = data.filters_memory_min;
+                    this.filters.filters_memory_max = data.filters_memory_max
             });
             this.getProducts();
         },
@@ -94,9 +96,12 @@
             getFiltered() {
 
                 var products = this.products.filter((product) => {
+                    console.log(this.filters.filters_memory);
+                    console.log(product.filters_memory >= this.filters.filters_memory_min + ' and '+ product.filters_memory <= this.filters.filters_memory_max);
                     return product.title.toLowerCase().includes(this.filters.title.toLowerCase())
                         && product.category.toLowerCase().includes(this.filters.category.toLowerCase())
-                        && product.filters_memory.toLowerCase().includes(this.filters.filters_memory.toLowerCase());
+                        && product.filters_memory >= this.filters.filters_memory_min
+                        && product.filters_memory <= this.filters.filters_memory_max;
                 });
 
                 return products;

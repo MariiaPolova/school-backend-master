@@ -12,8 +12,8 @@ const schema = new Schema({
         rating_votes: { type: Number, default: 0 },
         img: [String],
         amount: { type: Number, default: 0 },
-        filters_memory: {type: String},
-        filters_ram: {type: String},
+        filters_memory: {type: Number},
+        filters_ram: {type: Number},
         filters_producer: {type: String}
 });
 

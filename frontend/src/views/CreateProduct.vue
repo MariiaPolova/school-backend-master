@@ -146,7 +146,7 @@
                         { min: 3, max: 25, message: 'Length should be 3 to 25', trigger: 'change' }
                     ],
                     price: [
-                        {  type: 'number', required: true, message: 'Please input price, it should be number', trigger: 'change' }
+                        {  required: true, message: 'Please input price, it should be number', trigger: 'change' }
                     ],
                     description: [
                         { required: true, message: 'Please input description', trigger: 'change' }
@@ -161,7 +161,7 @@
                         { message: 'Please input RAM, it should be number', trigger: 'change' }
                     ],
                     amount: [
-                        { type: 'number', message: 'Please input amount of available products', trigger: 'change' }
+                        { required: true, message: 'Please input amount of available products', trigger: 'change' }
                     ],
                     color: [
                         { required: true, message: 'Please input color', trigger: 'change' }

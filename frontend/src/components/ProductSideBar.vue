@@ -9,7 +9,10 @@
         <el-submenu index="2">
             <template slot="title"><i class="el-icon-menu"></i>Capacity search</template>
             <el-menu-item index="2-1">
-                <el-input v-model="searchMemory" @change="filterFiltersMemory"></el-input>
+                <el-input v-model="searchMemoryMin" @change="filterFiltersMemory"></el-input>
+            </el-menu-item>
+            <el-menu-item index="2-2">
+                <el-input v-model="searchMemoryMax" @change="filterFiltersMemory"></el-input>
             </el-menu-item>
         </el-submenu>
         <el-submenu index="3">
@@ -45,7 +48,8 @@
         data() {
             return{
                 searchTitle: '',
-                searchMemory: '',
+                searchMemoryMin: 1,
+                searchMemoryMax: 1000,
                 searchCategory: ''
             }
         },
@@ -62,7 +66,8 @@
             },
             filterFiltersMemory() {
                 eventBus.$emit('memoryCustomFilter', {
-                    filters_memory: this.searchMemory,
+                    filters_memory_min: this.searchMemoryMin,
+                    filters_memory_max: this.searchMemoryMax,
                 })
             }
         }

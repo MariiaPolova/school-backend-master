@@ -14,7 +14,7 @@
         </el-submenu>
         <el-submenu index="3">
             <template slot="title"><i class="el-icon-setting"></i>Email search</template>
-            <el-menu-item index="3-1">
+            <el-menu-item index="3-1" style="padding-bottom: 15px">
                 <el-input v-model="searchEmail" @change="filterEmail"></el-input>
             </el-menu-item>
         </el-submenu>
@@ -22,14 +22,8 @@
 </template>
 
 <style>
-    .el-header {
-        background-color: #B3C0D1;
-        color: #333;
-        line-height: 60px;
-    }
-
-    .el-aside {
-        color: #333;
+    .el-menu{
+        padding-bottom: 15px;
     }
 </style>
 

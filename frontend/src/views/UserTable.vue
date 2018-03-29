@@ -3,7 +3,7 @@
         <el-aside width="220px" height="auto" style="background-color: rgb(238, 241, 246); border: 2px solid #eee">
             <side-bar/>
             <div  style="text-align:center;">
-                <el-button type="text">
+                <el-button type="text" style="padding-top: 20px">
                     <router-link :to="{ name: 'createUser'}">Create New User</router-link>
                 </el-button>
             </div>

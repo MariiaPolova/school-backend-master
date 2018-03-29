@@ -1,7 +1,7 @@
 'use strict'
 
 const buildParams = {
-  title: 'Test',
+  title: 'Admin portal',
   // Options for webpack-dev-server
   // See https://webpack.js.org/configuration/dev-server
   devServer: {
