@@ -15,7 +15,6 @@
     "test": "eslint --fix src && prettier --write \"src/**/*.js\"",
     "m-test": "mocha --require babel-register test/",
     "heroku-prebuild": "npm i --dev && npm i && npm run build && cd frontend && npm i --dev && npm i && npm run build"
-
   },
   "dependencies": {
     "@koa/cors": "^2.2.1",
