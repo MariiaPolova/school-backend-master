@@ -1,7 +1,7 @@
 <template>
   <div>
 
-    POST request 'users'
+    <p><strong>Create new user</strong></p>
 
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm" v-loading="loading">
       <el-form-item label="User name" prop="username">
@@ -12,9 +12,11 @@
         <el-input v-model="ruleForm.ownname"></el-input>
       </el-form-item>
 
+
       <el-form-item label="Surname" prop="surname">
         <el-input v-model="ruleForm.surname"></el-input>
       </el-form-item>
+
 
       <el-form-item label="Email" prop="email">
         <el-input v-model="ruleForm.email"></el-input>
@@ -46,6 +48,13 @@
   </div>
 </template>
 
+<style>
+  .inline-input {
+    display: inline-block;
+    width: 130px;
+  }
+</style>
+
 <script>
     import axios from '../my-axios.js';
     import router from "../app.js";
@@ -65,8 +74,8 @@
                 },
                 rules: {
                     username: [
-                        { required: true, message: 'Please input username', trigger: 'blur' },
-                        { min: 3, max: 10, message: 'Length should be 3 to 10', trigger: 'blur' }
+                        { required: true, message: 'Please input username', trigger: 'change' },
+                        { min: 3, max: 10, message: 'Length should be 3 to 10', trigger: 'change'}
                     ],
                     ownname: [
                         { required: true, message: 'Please input First Name', trigger: 'change' }
@@ -75,7 +84,7 @@
                         { required: true, message: 'Please input Second Name', trigger: 'change' }
                     ],
                     email: [
-                        { required: true, message: 'Please input email', trigger: 'change' }
+                        { type: 'email', required: true, message: 'Please input email', trigger: 'change' }
                     ],
                     password: [
                         { required: true, message: 'Please input password', trigger: 'change' }
@@ -91,6 +100,7 @@
             if(this.$route.params._id){
                 this.updateForm();
             }
+            this.loading = false;
 
 
         },
@@ -101,16 +111,30 @@
                         if(this.$route.params._id){
                             axios.put('/users/' + this.$route.params._id, this.ruleForm)
                                 .then(response => {
+                                    this.$notify({
+                                        title: 'User is updated!',
+                                        message: 'The user ' + this.ruleForm.username + ' was updated!',
+                                        type: 'success',
+                                    });
                                     this.$router.push('/users');
                                 })
                                 .catch(error => {
                                     console.log(error);
+                                    this.$notify({
+                                        title: 'User is failed to update!',
+                                        type: 'error'
+                                    });
                                 });
                         }
                         else {
                             axios.post('/users', this.ruleForm)
                                 .then(response => {
                                     console.log(this.$route.name);
+                                    this.$notify({
+                                        title: 'User is created!',
+                                        message: 'The user ' + this.ruleForm.username + ' was created!',
+                                        type: 'success',
+                                    });
                                     this.$router.push('/users');
                                 })
                                 .catch(error => {
@@ -132,10 +156,13 @@
                         .then(response => {
                             this.loading = false;
                             this.ruleForm = response.data;
-                            console.log("ruleform " + this.ruleForm + "||" + response.data);
                         })
                         .catch(error => {
                             console.log(error);
+                            this.$notify({
+                                title: 'User is failed to create!',
+                                type: 'error'
+                            });
                         });
                 }
             },

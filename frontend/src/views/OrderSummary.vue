@@ -4,8 +4,8 @@
             <view-order/>
         </div>
 
-        <div>
-            <el-button>
+        <div class="btn-search">
+            <el-button icon="el-icon-search">
                 <router-link :to="{ name: 'orders'}">View All</router-link>
             </el-button>
         </div>
@@ -13,12 +13,8 @@
 </template>
 
 <style>
-    .text {
-        font-size: 14px;
-    }
-
-    .item {
-        margin-bottom: 18px;
+    .btn-search {
+        text-align:center;
     }
 
     .clearfix:before,
@@ -40,12 +36,14 @@
     import router from "../app.js";
     import ElFooter from "../../node_modules/element-ui/packages/footer/src/main.vue";
     import ElForm from "../../node_modules/element-ui/packages/form/src/form.vue";
-    import ViewOrder from "../components/ViewOrder.vue"
+    import ViewOrder from "../components/ViewOrder.vue";
+    import ViewProduct from "../components/ViewProduct.vue";
     export default {
         components: {
             ElForm,
             ElFooter,
-            ViewOrder},
+            ViewOrder,
+            ViewProduct},
         data(){
             return{
                 loading: true,

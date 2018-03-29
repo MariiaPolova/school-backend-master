@@ -5,9 +5,12 @@ import router from './router'
 import mixin from './mixin'
 import App from './components/App'
 
+
 import 'regenerator-runtime/runtime';
 
 Vue.use(ElementUI, { locale });
+
+ export const eventBus = new Vue();
 
 Vue.mixin(mixin);
 

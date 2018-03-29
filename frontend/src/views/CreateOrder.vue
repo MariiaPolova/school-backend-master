@@ -8,24 +8,24 @@
         <el-input v-model="ruleForm.id"></el-input>
       </el-form-item>
 
-      <el-form-item label="Name" prop="customer_name">
-        <el-input v-model="ruleForm.customer_id.ownname"
+      <el-form-item label="Customer ID" prop="customer_name">
+        <el-input v-model="ruleForm.customer_id"
                   :disabled="true"></el-input>
       </el-form-item>
 
-
-      <el-form-item label="Customer" prop="customer_name">
+      <el-form-item label="Customer" prop="customer_id">
         <div>
-          <el-select v-model="ruleForm.customer_name" :change="fillOutCustomer(ruleForm.customer_name)" filterable placeholder="Select one">
+          <el-select v-model="ruleForm.customer_id"
+                     @change="fillOutCustomer(users.find(obj => obj._id === ruleForm.customer_id))"
+                     filterable
+                     placeholder="Select one">
             <el-option
                     v-for="user in users"
                     :key="user._id"
-                    :label="user.username"
-                    :value="user">
-
+                    :label="user.ownname + ' ' + user.surname"
+                    :value="user._id">
             </el-option>
           </el-select>
-          {{ruleForm.customer_name}}
         </div>
       </el-form-item>
 
@@ -43,16 +43,39 @@
                 :label="'Product # ' + index"
                 :key="product.product_id"
                 :prop="'products.' + index + '.title'">
-          <el-select v-model="product.product_id" placeholder="Select one">
-            <el-option
-                    v-for="item in products"
-                    :key="item._id"
-                    :label="item.title"
-                    :value="item._id">
-            </el-option>
-          </el-select>
-          <el-input v-model="product.quantity"></el-input>
-          <el-button @click.prevent="removeProduct(product)">Delete</el-button>
+          <el-col :span="5">
+            <el-select v-model="product.product_id"
+                       @change="fillOutProduct(products.find(obj => obj._id === product.product_id), index)"
+                       placeholder="Select one">
+              <el-option
+                      v-for="item in products"
+                      :key="item._id"
+                      :label="item.title"
+                      :value="item._id">
+              </el-option>
+            </el-select>
+          </el-col>
+
+          <el-col :span="5">
+            <el-input v-model="product.product_id"
+                      :disabled="true"></el-input>
+          </el-col>
+          <div style="margin-top: 50px;">
+
+            <el-col :span="4">
+              <el-input v-model="product.product_price"
+                        :disabled="true"></el-input>
+            </el-col>
+
+            <el-col :span="4">
+              <el-input-number v-model="product.quantity" :min="0"></el-input-number>
+            </el-col>
+              <el-col :span="4">
+              <el-button @click.prevent="removeProduct(product)">Delete</el-button>
+            </el-col>
+          </div>
+
+
         </el-form-item>
         <el-form-item>
           <el-button @click="addProduct">New product</el-button>
@@ -60,7 +83,7 @@
 
       <el-form-item>
           <el-button type="primary" @click="submitForm('ruleForm')">Submit</el-button>
-          <el-button @click="resetForm('ruleForm')">Reset</el-button>
+        <el-button @click="resetForm('ruleForm')">Reset</el-button>
           <!--change if Update -> then 'cancel'-->
       </el-form-item>
     </el-form>
@@ -71,12 +94,11 @@
 <script>
     import axios from '../my-axios.js';
     import router from "../app.js";
-    //import users from "../components/UsersTable.vue";
 
     export default {
         data() {
             return {
-                loading: false,
+                loading: true,
                 users: [],
                 products: [],
                 ruleForm: {
@@ -88,11 +110,11 @@
                 },
                 rules: {
                     id: [
-                        { required: true, message: 'Please input ID', trigger: 'blur' },
-                        { min: 1, message: 'Length should at least 1 symbol', trigger: 'blur' }
+                        { required: true, message: 'Please input ID', trigger: 'change' }
+//                        { message: 'Length should at least 1 symbol', trigger: 'change' }
                     ],
-                    customer_id: [
-                        { required: true, message: 'Please input customer ID', trigger: 'change' }
+                    customer_name: [
+                        { required: true, message: 'Please select customer username', trigger: 'change' }
                     ],
                     status: [
                         { required: true, message: 'Please input status', trigger: 'change' }
@@ -106,6 +128,7 @@
             }
             this.showCustomersDropDown();
             this.showProductsDropDown();
+            this.loading= false;
         },
         methods: {
             submitForm(formName) {
@@ -116,15 +139,29 @@
                             axios.put('/orders/' + this.$route.params._id, this.ruleForm)
                                 .then(response => {
                                     this.$router.push('/orders');
+                                    this.$notify({
+                                        title: 'Order is updated!',
+                                        message: 'The order #' + this.ruleForm.id + ' was updated!',
+                                        type: 'success'
+                                    });
                                 })
                                 .catch(error => {
                                     console.log(error);
+                                    this.$notify({
+                                        title: 'Order is failed to create!',
+                                        type: 'error'
+                                    });
                                 });
                         }
                         else {
                             console.log( this.ruleForm);
                             axios.post('/orders', this.ruleForm)
                                 .then(response => {
+                                    this.$notify({
+                                        title: 'Order is created!',
+                                        message: 'The order #' + this.ruleForm.id + ' was created!',
+                                        type: 'success'
+                                    });
                                     this.$router.push('/orders');
                                 })
                                 .catch(error => {
@@ -144,7 +181,6 @@
                     //this.loading = true;
                     axios.get('/orders/' + this.$route.params._id) // make async await
                         .then(response => {
-                           // this.loading = false;
                             this.ruleForm = response.data;
                         })
                         .catch(error => {
@@ -191,10 +227,15 @@
                 });
             },
             fillOutCustomer(customer){
-                console.log('fill out' + customer);
                 this.ruleForm.customer_name = customer.ownname + ' ' + customer.surname;
-                this.ruleForm.customer_id = customer._id;
-            }
+            },
+
+            fillOutProduct(product, index){
+                console.log(product);
+                this.ruleForm.products[index].product_price = product.price;
+                this.ruleForm.products[index].product_title = product.title;
+            },
+
         }
     }
 </script>

@@ -1,34 +1,45 @@
 <template>
     <el-table
-            :data="products"
-            style="width: 100%">
+            :data="getFiltered"
+            style="width: 100%"
+            v-loading="loading"
+            element-loading-text="Please wait for products..."
+            :default-sort = "{prop: 'title', order: 'descending'}">
         <el-table-column
                 prop="title"
                 label="Title"
-                width="180">
+                width="200"
+                sortable>
         </el-table-column>
         <el-table-column
                 prop="price"
                 label="Price"
-                width="90">
+                width="90"
+                sortable>
         </el-table-column>
         <el-table-column
                 prop="color"
                 label="Color"
-                width="90">
+                width="90"
+                sortable>
         </el-table-column>
         <el-table-column
                 prop="category"
-                label="Category">
+                label="Category"
+                width="120"
+                sortable>
         </el-table-column>
         <el-table-column
                 prop="amount"
-                label="Available">
+                label="Available"
+                width="120"
+                sortable>
         </el-table-column>
         <el-table-column
-                label="Image">
+                label="Image"
+                width="120">
             <template slot-scope="scope">
-                <img v-if="scope.row.img" :src="scope.row.img" class="avatar">
+                <img v-if="scope.row.img" :src="scope.row.img" class="img-fluid" width="70">
             </template>
         </el-table-column>
 
@@ -41,7 +52,7 @@
                 <el-button
                         size="mini"
                         type="danger"
-                        @click="deleteProduct(scope.row._id)">Delete</el-button>
+                        @click="deleteProduct(scope.row._id, scope.row.title)">Delete</el-button>
             </template>
         </el-table-column>
     </el-table>
@@ -51,17 +62,45 @@
 <script>
     import axios from '../my-axios.js';
     import router from "../app.js";
+    import {eventBus} from '../app'
     export default {
         components: {},
         data() {
             return{
                 loading: true,
+                filters: {
+                    title: "",
+                    filters_memory: "",
+                    category: "",
+                },
                 products: []
             }
         },
         created (){
-            this.getProducts();
+            eventBus.$on('titleCustomFilter', data => {
+                this.filters.title = data.title
+            });
 
+            eventBus.$on('categoryCustomFilter', data => {
+                this.filters.category = data.category
+            });
+
+            eventBus.$on('memoryCustomFilter', data => {
+                this.filters.filters_memory = data.filters_memory
+            });
+            this.getProducts();
+        },
+        computed: {
+            getFiltered() {
+
+                var products = this.products.filter((product) => {
+                    return product.title.toLowerCase().includes(this.filters.title.toLowerCase())
+                        && product.category.toLowerCase().includes(this.filters.category.toLowerCase())
+                        && product.filters_memory.toLowerCase().includes(this.filters.filters_memory.toLowerCase());
+                });
+
+                return products;
+            }
         },
         methods: {
 
@@ -69,20 +108,31 @@
                 axios.get('/products') // make normal async await!!
                     .then(response => {
                         this.products = response.data;
+                        this.loading = false;
                     })
                     .catch(error => {
                         console.log(error);
                     });
             },
-            async deleteProduct(productID) {
-                console.log(productID);
+            async deleteProduct(productID, title) {
+                this.loading = true;
                 await axios.delete('/products/' + productID)
                     .then(response => {
                         console.log(response);
+                        this.$notify({
+                            title: 'Product deleted',
+                            message: 'The product ' + title + ' was deleted!',
+                            type: 'success'
+                        });
                         this.getProducts();
                     })
                     .catch(error => {
                         console.log(error);
+                        this.$notify({
+                            title: 'Product is NOT deleted',
+                            message: 'The error occurred during deleting of ' + title,
+                            type: 'error'
+                        });
                     });
             }
         }

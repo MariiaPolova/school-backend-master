@@ -8,6 +8,7 @@ import UserTable from '../views/UserTable';
 import ProductTable from '../views/ProductTable';
 import OrderTable from '../views/OrderTable';
 import OrderSummary from '../views/OrderSummary';
+import UsersTable from '../components/UsersTable';
 
 Vue.use(Router);
 
@@ -16,7 +17,6 @@ export default new Router({
   routes: [
     {
       name: 'home',
-      title: 'Home',
       path: '/',
       component: Home
     },
@@ -90,6 +90,12 @@ export default new Router({
             id: true,
             products: true
         }
+    },
+      // filtering
+    {
+        path: '/users',
+        component: UsersTable,
+        props: (route) => ({query: route.query.q})
     },
     {
       path: '/*',
